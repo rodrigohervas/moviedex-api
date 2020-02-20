@@ -1,6 +1,6 @@
 # moviedex-api
 
-Node.js server app using Express, helmet, code, dotenv, and security heards
+Node.js server app using Express, helmet, code, dotenv, and security headers
 
 ## technologies used:
 
