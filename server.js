@@ -1,7 +1,7 @@
 const app = require('./app')
 
-const port = 3000
-const host = 'http://127.0.0.1'
+const port = process.env.PORT || 8000
+
 app.listen(port, () => {
-    console.log(`server running at ${host}:${port}`)
+    console.log(`server running and listening at port: ${port}`)
 })

@@ -8,7 +8,8 @@ const movies = require('./resources/movies.json')
 const app = express()
 
 //MIDDLEWARE
-app.use(morgan('dev'))
+const morganSetting = process.env.NODE_ENV === 'production' ? 'tiny' : 'dev'
+app.use(morgan(morganSetting))
 app.use(helmet())
 app.use(cors())
 
@@ -17,12 +18,12 @@ function securityMiddleware(req, res, next) {
     //check api key
     const apiKey = req.get('authorization')
     if(!apiKey || apiKey.split(' ')[1] !== process.env.API_KEY) {
-        return res
-        .status(401)
-        .json( {error: 'Unauthorized request' } )
+        next( {status: '401', message: 'Unauthorized request' } )
     }
     next()
 }
+
+app.use(securityMiddleware)
 
 //ENDPOINTS
 //-> home
@@ -63,5 +64,18 @@ function movieHandler(req, res) {
 
 // -> /movie
 app.get('/movie', securityMiddleware, movieHandler)
+
+//error handling middleware
+function errorHandler(error, req, res, next){
+    let response
+    if(process.env.NODE_ENV === 'production'){
+        response = { error: { message: "server error" } }
+    }
+    else {
+        response = { error }
+    }
+    res.status(500).json(response)
+}
+app.use(errorHandler)
 
 module.exports = app
